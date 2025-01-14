@@ -28,9 +28,7 @@ class PAS(object):
     def load(self, filename : str):
         with open(filename, 'r') as f:
             lines = f.readlines()
-            self.timeslots = int(lines[0])
-            self.classes = int(lines[1])
-            self.classrooms = int(lines[2])        
+            self.timeslots, self.classes, self.classrooms = map(int, lines[0].split())
 
     def __str__(self):
         return f"PAS:\ntimeslots={self.timeslots}\nclasses={self.classes}\nclassrooms={self.classrooms}\nsolution={self.solution})"
@@ -41,35 +39,42 @@ class PAS(object):
         sol.timeslots = problem.timeslots
         sol.classes = problem.classes
         sol.classrooms = problem.classrooms
-        sol.solution = [[[randint(0, 1) for _ in range(sol.classrooms)] for _ in range(sol.classes)] for _ in range(sol.timeslots)]
+        sol.solution = [[[randint(0, 1) for _ in range(sol.classes)] for _ in range(sol.classrooms)] for _ in range(sol.timeslots)]
         print(sol.solution)
         return sol
 
     @staticmethod
     def maximize(pPAS: 'PAS', sol: SolutionPAS) -> float:
-        max_eval = 0
-        return max_eval
+        eval = 0
+        for t in range(sol.timeslots):
+            for c in range(sol.classes):
+                for r in range(sol.classrooms):
+                    eval += sol.solution[t][r][c]
+
+        #TODO: Adicionar restrições
+        return eval
 
 class MoveBitFlip(Move):
-    def __init__(self, _k :int):
-        self.k = _k
+    def __init__(self, t_, r_, c_):
+        self.t = t_
+        self.r = r_
+        self.c = c_
 
     def apply(self, problemCtx: PAS, sol: SolutionPAS) -> 'MoveBitFlip':
-        sol.solution = sol.solution
-        return MoveBitFlip(self.k)
+        sol.solution[self.t][self.r][self.c] = 1 - sol.solution[self.t][self.r][self.c]
+        return MoveBitFlip(self.t, self.r, self.c)
 
     def canBeApplied(self, problemCtx: PAS, sol: SolutionPAS) -> bool:
         return True
 
     def eq(self, problemCtx: PAS, m2: 'MoveBitFlip') -> bool:
-        return self.k == m2.k
+        return self.t == m2.t and self.r == m2.r and self.c == m2.c
 
     
 class NSBitFlip(object):
     @staticmethod
     def randomMove(pPAS: PAS, sol: SolutionPAS) -> MoveBitFlip:
-        k = randint(0, pPAS.timeslots*pPAS.classes*pPAS.classrooms)
-        return MoveBitFlip(k)
+        return MoveBitFlip(randint(0, pPAS.timeslots-1), randint(0, pPAS.classrooms-1), randint(0, pPAS.classes-1))
 
 ## ================================================
 ## ================================================
