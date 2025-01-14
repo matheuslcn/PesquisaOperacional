@@ -21,11 +21,16 @@ class SolutionPAS(object):
 class PAS(object):
     def __init__(self):
         self.engine = Engine()
-        
+        self.timeslots : int = 0
+        self.classes : int = 0
+        self.classrooms : int = 0   
 
     def load(self, filename : str):
-        return None
-        
+        with open(filename, 'r') as f:
+            lines = f.readlines()
+            self.timeslots = int(lines[0])
+            self.classes = int(lines[1])
+            self.classrooms = int(lines[2])        
 
     def __str__(self):
         return f"PAS:\ntimeslots={self.timeslots}\nclasses={self.classes}\nclassrooms={self.classrooms}\nsolution={self.solution})"
@@ -33,11 +38,17 @@ class PAS(object):
     @staticmethod
     def generateSolution(problem: 'PAS') -> SolutionPAS:
         sol = SolutionPAS()
+        sol.timeslots = problem.timeslots
+        sol.classes = problem.classes
+        sol.classrooms = problem.classrooms
+        sol.solution = [[[randint(0, 1) for _ in range(sol.classrooms)] for _ in range(sol.classes)] for _ in range(sol.timeslots)]
+        print(sol.solution)
         return sol
 
     @staticmethod
     def maximize(pPAS: 'PAS', sol: SolutionPAS) -> float:
-        return 0.0
+        max_eval = 0
+        return max_eval
 
 class MoveBitFlip(Move):
     def __init__(self, _k :int):
@@ -57,13 +68,14 @@ class MoveBitFlip(Move):
 class NSBitFlip(object):
     @staticmethod
     def randomMove(pPAS: PAS, sol: SolutionPAS) -> MoveBitFlip:
-        return MoveBitFlip(randint(0, pPAS.n - 1))
+        k = randint(0, pPAS.timeslots*pPAS.classes*pPAS.classrooms)
+        return MoveBitFlip(k)
 
 ## ================================================
 ## ================================================
 
 pPAS = PAS()
-pPAS.load('knapsack-example.txt')
+pPAS.load('teste.txt')
 pPAS.engine.setup(pPAS)
 pPAS.engine.add_ns_class(pPAS, NSBitFlip) 
 list_idx = pPAS.engine.create_component_list("[ OptFrame:NS 0 ]", "OptFrame:NS[]")
