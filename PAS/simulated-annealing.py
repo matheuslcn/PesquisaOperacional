@@ -5,7 +5,6 @@ from optframe.protocols import *
 from optframe.heuristics import *
 from optframe.components import Move
 from random import randint
-from numpy import dot
 
 class SolutionPAS(object):
     def __init__(self):
@@ -52,15 +51,45 @@ class PAS(object):
     @staticmethod
     def maximize(pPAS: 'PAS', sol: SolutionPAS) -> float:
         eval = 0
+        penalty = 10  # Penalização fixa para violações
+
+        # Avaliação de alocações válidas
         for t in range(len(sol.timeslots)):
             for c in range(len(sol.classes)):
                 for r in range(len(sol.classrooms)):
-                    eval += sol.solution[t][r][c]
+                    if sol.solution[t][r][c] == 1:                    
+                        # Penalizações
+                        if sol.timeslots[t] != sol.classes[c][1]:  # Horário incompatível
+                            eval -= penalty
+                        if sol.classes[c][2] != sol.classrooms[r][1]:  # Tipo incompatível
+                            eval -= penalty
+                        if sol.classes[c][3] > sol.classrooms[r][2]:  # Capacidade insuficiente
+                            eval -= penalty
+                        
+                        # Recompensas
+                        eval += 5  # Alocação básica válida
+                        if sol.timeslots[t] == sol.classes[c][1]:
+                            eval += 5  # Horário ideal
+                        if sol.classes[c][2] == sol.classrooms[r][1]:
+                            eval += 5  # Tipo ideal
+                        if sol.classes[c][3] <= sol.classrooms[r][2]:
+                            eval += 5  # Capacidade suficiente
 
-        #TODO: Adicionar restrições
-        # Uma classe só pode ser alocada em um único horário
-        # Uma classe só pode ser alocada em uma única sala
+        # Restrições de unicidade
+        for c in range(len(sol.classes)):
+            for t in range(len(sol.timeslots)):
+                if sum(sol.solution[t][r][c] for r in range(len(sol.classrooms))) > 1:
+                    eval -= penalty  # Turma alocada a várias salas no mesmo horário
 
+        for c in range(len(sol.classes)):
+            for r in range(len(sol.classrooms)):
+                if sum(sol.solution[t][r][c] for t in range(len(sol.timeslots))) > 1:
+                    eval -= penalty  # Turma alocada a vários horários na mesma sala
+
+        for t in range(len(sol.timeslots)):
+            for r in range(len(sol.classrooms)):
+                if sum(sol.solution[t][r][c] for c in range(len(sol.classes))) > 1:
+                    eval -= penalty  # Sala ocupada por mais de uma turma no mesmo horário
         return eval
 
 class MoveBitFlip(Move):
