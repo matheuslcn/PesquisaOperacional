@@ -36,10 +36,16 @@ class PAS(object):
                 self.timeslots.append(lines[i])
             for i in range(n_timeslots+1, n_timeslots+n_classes+1):
                 class_ = lines[i].split()
-                self.teoric_classes.append((class_[0], class_[1], int(class_[2]), class_[3]))
+                if class_[3] == 'T':
+                    self.teoric_classes.append((class_[0], class_[1], int(class_[2]), class_[3]))
+                else:
+                    self.pratic_classes.append((class_[0], class_[1], int(class_[2]), class_[3]))
             for i in range(n_timeslots+n_classes+1, n_timeslots+n_classes+n_classrooms+1):
                 classroom = lines[i].split()
-                self.teoric_classrooms.append((classroom[0], classroom[1], int(classroom[2])))
+                if classroom[2] == 'T':
+                    self.teoric_classrooms.append((classroom[0], classroom[1], int(classroom[2])))
+                else:
+                    self.pratic_classrooms.append((classroom[0], classroom[1], int(classroom[2])))
             
 
 
