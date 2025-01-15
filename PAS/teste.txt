@@ -1,10 +1,17 @@
-3 3 3
-7:00
-9:00
+3 10 3
+07:00
+09:00
 11:00
-Turma1 18:00 T 35
-Turma2 14:00 P 30
+Turma1 07:00 T 35
+Turma2 07:00 P 30
 Turma3 09:00 T 45
+Turma4 09:00 T 40
+Turma5 11:00 P 15
+Turma6 11:00 T 40
+Turma7 09:00 T 50
+Turma8 07:00 T 40
+Turma9 11:00 T 40
+Turma10 11:00 P 40
 Sala1 P 30
 Sala2 T 40
 Sala3 T 50
