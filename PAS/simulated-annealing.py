@@ -1,4 +1,3 @@
-# OptFrame Python Demo 0-1 Knapsack Problem + Simulated Annealing
 
 from typing import List
 from optframe import *
@@ -10,48 +9,67 @@ from numpy import dot
 
 class SolutionPAS(object):
     def __init__(self):
-        self.timeslots : int = 0
-        self.classes : int = 0
-        self.classrooms : int = 0
+        self.timeslots : List[str] = []
+        self.teoric_classes : List[str] = []
+        self.teoric_classrooms : List[str] = []
+        self.pratic_classes : List[str] = []
+        self.pratic_classrooms : List[str] = []
         self.solution : List[List[List[int]]] = []
     
     def __str__(self):
-        return f"SolutionPAS:\ntimeslots={self.timeslots}\nclasses={self.classes}\nclassrooms={self.classrooms}\nsolution={self.solution})"
+        return f"SolutionPAS:\ntimeslots={self.timeslots}\nteoric_classes={self.teoric_classes}\nteoric_classrooms={self.teoric_classrooms}\npratic_classes={self.pratic_classes}\npratic_classrooms={self.pratic_classrooms}\nsolution={self.solution}"
 
 class PAS(object):
     def __init__(self):
         self.engine = Engine()
-        self.timeslots : int = 0
-        self.classes : int = 0
-        self.classrooms : int = 0   
+        self.timeslots : List[str] = []
+        self.teoric_classes : List[str] = []
+        self.teoric_classrooms : List[str] = []
+        self.pratic_classes : List[str] = []
+        self.pratic_classrooms : List[str] = []
 
     def load(self, filename : str):
         with open(filename, 'r') as f:
             lines = f.readlines()
-            self.timeslots, self.classes, self.classrooms = map(int, lines[0].split())
+            n_timeslots, n_classes, n_classrooms = map(int, lines[0].split())
+            for i in range(1, n_timeslots+1):
+                self.timeslots.append(lines[i])
+            for i in range(n_timeslots+1, n_timeslots+n_classes+1):
+                class_ = lines[i].split()
+                self.teoric_classes.append((class_[0], class_[1], int(class_[2]), class_[3]))
+            for i in range(n_timeslots+n_classes+1, n_timeslots+n_classes+n_classrooms+1):
+                classroom = lines[i].split()
+                self.teoric_classrooms.append((classroom[0], classroom[1], int(classroom[2])))
+            
+
+
 
     def __str__(self):
-        return f"PAS:\ntimeslots={self.timeslots}\nclasses={self.classes}\nclassrooms={self.classrooms}\nsolution={self.solution})"
+        return f"PAS:\ntimeslots={self.timeslots}\nclasses={self.teoric_classes}\nclassrooms={self.teoric_classrooms})"
 
     @staticmethod
     def generateSolution(problem: 'PAS') -> SolutionPAS:
         sol = SolutionPAS()
         sol.timeslots = problem.timeslots
-        sol.classes = problem.classes
-        sol.classrooms = problem.classrooms
-        sol.solution = [[[randint(0, 1) for _ in range(sol.classes)] for _ in range(sol.classrooms)] for _ in range(sol.timeslots)]
-        print(sol.solution)
+        sol.teoric_classes = [c for c in problem.teoric_classes]
+        sol.teoric_classrooms = [c for c in problem.teoric_classrooms]
+        sol.pratic_classes = [c for c in problem.teoric_classes]
+        sol.pratic_classrooms = [c for c in problem.teoric_classrooms]
+        sol.solution = [[[randint(0, 1) for _ in range(len(sol.teoric_classes))] for _ in range(len(sol.teoric_classrooms))] for _ in range(len(sol.timeslots))]
         return sol
 
     @staticmethod
     def maximize(pPAS: 'PAS', sol: SolutionPAS) -> float:
         eval = 0
-        for t in range(sol.timeslots):
-            for c in range(sol.classes):
-                for r in range(sol.classrooms):
+        for t in range(len(sol.timeslots)):
+            for c in range(len(sol.teoric_classes)):
+                for r in range(len(sol.teoric_classrooms)):
                     eval += sol.solution[t][r][c]
 
         #TODO: Adicionar restrições
+        # Uma classe só pode ser alocada em um único horário
+        # Uma classe só pode ser alocada em uma única sala
+
         return eval
 
 class MoveBitFlip(Move):

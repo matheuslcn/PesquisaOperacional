@@ -1,1 +1,10 @@
 3 3 3
+7:00
+9:00
+11:00
+Turma1 18:00 35 Teorica
+Turma2 14:00 30 Pratica
+Turma3 09:00 45 Teorica
+Sala1 Laboratorio 30
+Sala2 Teorica 40
+Sala3 Teorica 50
