@@ -2,9 +2,9 @@
 7:00
 9:00
 11:00
-Turma1 18:00 35 T
-Turma2 14:00 30 P
-Turma3 09:00 45 T
+Turma1 18:00 T 35
+Turma2 14:00 P 30
+Turma3 09:00 T 45
 Sala1 P 30
 Sala2 T 40
 Sala3 T 50

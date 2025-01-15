@@ -10,23 +10,19 @@ from numpy import dot
 class SolutionPAS(object):
     def __init__(self):
         self.timeslots : List[str] = []
-        self.teoric_classes : List[str] = []
-        self.teoric_classrooms : List[str] = []
-        self.pratic_classes : List[str] = []
-        self.pratic_classrooms : List[str] = []
+        self.classes : List[str] = []
+        self.classrooms : List[str] = []
         self.solution : List[List[List[int]]] = []
     
     def __str__(self):
-        return f"SolutionPAS:\ntimeslots={self.timeslots}\nteoric_classes={self.teoric_classes}\nteoric_classrooms={self.teoric_classrooms}\npratic_classes={self.pratic_classes}\npratic_classrooms={self.pratic_classrooms}\nsolution={self.solution}"
+        return f"SolutionPAS:\ntimeslots={self.timeslots}\nteoric_classes={self.classes}\nteoric_classrooms={self.classrooms}\nsolution={self.solution}"
 
 class PAS(object):
     def __init__(self):
         self.engine = Engine()
         self.timeslots : List[str] = []
-        self.teoric_classes : List[str] = []
-        self.teoric_classrooms : List[str] = []
-        self.pratic_classes : List[str] = []
-        self.pratic_classrooms : List[str] = []
+        self.classes : List[str] = []
+        self.classrooms : List[str] = []
 
     def load(self, filename : str):
         with open(filename, 'r') as f:
@@ -34,42 +30,31 @@ class PAS(object):
             n_timeslots, n_classes, n_classrooms = map(int, lines[0].split())
             for i in range(1, n_timeslots+1):
                 self.timeslots.append(lines[i])
-            for i in range(n_timeslots+1, n_timeslots+n_classes+1):
+            for i in range(n_timeslots+1, n_timeslots+1+n_classes):
                 class_ = lines[i].split()
-                if class_[3] == 'T':
-                    self.teoric_classes.append((class_[0], class_[1], int(class_[2]), class_[3]))
-                else:
-                    self.pratic_classes.append((class_[0], class_[1], int(class_[2]), class_[3]))
-            for i in range(n_timeslots+n_classes+1, n_timeslots+n_classes+n_classrooms+1):
+                self.classes.append((class_[0], class_[1], class_[2], int(class_[3])))
+            for i in range(n_timeslots+1+n_classes, n_timeslots+1+n_classes+n_classrooms):
                 classroom = lines[i].split()
-                if classroom[2] == 'T':
-                    self.teoric_classrooms.append((classroom[0], classroom[1], int(classroom[2])))
-                else:
-                    self.pratic_classrooms.append((classroom[0], classroom[1], int(classroom[2])))
+                self.classrooms.append((classroom[0], classroom[1], int(classroom[2])))
             
-
-
-
     def __str__(self):
-        return f"PAS:\ntimeslots={self.timeslots}\nclasses={self.teoric_classes}\nclassrooms={self.teoric_classrooms})"
+        return f"PAS:\ntimeslots={self.timeslots}\nclasses={self.classes}\nclassrooms={self.classrooms})"
 
     @staticmethod
     def generateSolution(problem: 'PAS') -> SolutionPAS:
         sol = SolutionPAS()
         sol.timeslots = problem.timeslots
-        sol.teoric_classes = [c for c in problem.teoric_classes]
-        sol.teoric_classrooms = [c for c in problem.teoric_classrooms]
-        sol.pratic_classes = [c for c in problem.teoric_classes]
-        sol.pratic_classrooms = [c for c in problem.teoric_classrooms]
-        sol.solution = [[[randint(0, 1) for _ in range(len(sol.teoric_classes))] for _ in range(len(sol.teoric_classrooms))] for _ in range(len(sol.timeslots))]
+        sol.classes = [c for c in problem.classes]
+        sol.classrooms = [c for c in problem.classrooms]
+        sol.solution = [[[randint(0, 1) for _ in range(len(sol.classes))] for _ in range(len(sol.classrooms))] for _ in range(len(sol.timeslots))]
         return sol
 
     @staticmethod
     def maximize(pPAS: 'PAS', sol: SolutionPAS) -> float:
         eval = 0
         for t in range(len(sol.timeslots)):
-            for c in range(len(sol.teoric_classes)):
-                for r in range(len(sol.teoric_classrooms)):
+            for c in range(len(sol.classes)):
+                for r in range(len(sol.classrooms)):
                     eval += sol.solution[t][r][c]
 
         #TODO: Adicionar restrições
@@ -98,7 +83,7 @@ class MoveBitFlip(Move):
 class NSBitFlip(object):
     @staticmethod
     def randomMove(pPAS: PAS, sol: SolutionPAS) -> MoveBitFlip:
-        return MoveBitFlip(randint(0, pPAS.timeslots-1), randint(0, pPAS.classrooms-1), randint(0, pPAS.classes-1))
+        return MoveBitFlip(randint(0, len(pPAS.timeslots)-1), randint(0, len(pPAS.classrooms)-1), randint(0, len(pPAS.classes)-1))
 
 ## ================================================
 ## ================================================
