@@ -5,6 +5,7 @@ from optframe.protocols import *
 from optframe.heuristics import *
 from optframe.components import Move
 from random import randint
+from numpy import iinfo
 
 class SolutionPAS(object):
     def __init__(self):
@@ -51,14 +52,15 @@ class PAS(object):
     @staticmethod
     def maximize(pPAS: 'PAS', sol: SolutionPAS) -> float:
         eval = 0
-        penalty = 20  # Penalização fixa para violações
+        penalty = 20  # Penalização para violações
+        reward = 5  # Recompensa para alocações válidas
 
         # Avaliação de alocações válidas
         for t in range(len(sol.timeslots)):
             for c in range(len(sol.classes)):
                 for r in range(len(sol.classrooms)):
                     if sol.solution[t][r][c] == 1:                    
-                        # Penalizações
+                        # Penalizações para violações
                         time, room, capacity = 0, 0, 0
                         if sol.timeslots[t] != sol.classes[c][1]:  # Horário incompatível
                             time = 1
@@ -66,7 +68,7 @@ class PAS(object):
                             room = 1
                         if sol.classes[c][3] > sol.classrooms[r][2]:  # Capacidade insuficiente
                             capacity = 1
-                        eval -= (5*time + 5*room + 5*capacity)*(time + room + capacity)
+                        eval -= penalty*((time + room + capacity)**2)
                         
                         # Recompensas
                         time, room, capacity = 0, 0, 0
@@ -76,14 +78,15 @@ class PAS(object):
                             room = 1
                         if sol.classes[c][3] <= sol.classrooms[r][2]:
                             capacity = 1
-                        eval += 5*(time + room + capacity)
+                        eval += reward*((time + room + capacity))
 
         # Restrições de unicidade
         # Somente uma classe por sala e por horário
         for t in range(len(sol.timeslots)):
             for c in range(len(sol.classrooms)):
-                if sum(sol.solution[t][c]) > 1:
-                    eval -= penalty
+                result = sum(sol.solution[t][c])
+                if result > 1:
+                    eval -= penalty*(result**2)
         # Somente uma classe
         for c in range(len(sol.classes)):
             cs = []
@@ -92,7 +95,7 @@ class PAS(object):
                     cs.append(sol.solution[t][r][c])
             result = sum(cs)
             if result > 1:
-                eval -= result*penalty
+                eval -= penalty*(result**2)
         return eval
 
 class MoveBitFlip(Move):
@@ -126,11 +129,12 @@ if __name__ == "__main__":
     pPAS.engine.setup(pPAS)
     pPAS.engine.add_ns_class(pPAS, NSBitFlip) 
     list_idx = pPAS.engine.create_component_list("[ OptFrame:NS 0 ]", "OptFrame:NS[]")
-    sa = BasicSimulatedAnnealing(pPAS.engine, 0, 0, list_idx, 0.98, 100, 99999)
-    sout = sa.search(15.0)
-    print("Best solution: ",   sout.best_s)
-    print("Best evaluation: ", sout.best_e)
+    sa = BasicSimulatedAnnealing(pPAS.engine, 0, 0, list_idx, 0.5, 500, 999999)
+    sout = sa.search(10.0)
     sol = sout.best_s
+    print("Best solution: ",   sol)
+    print("Best evaluation: ", sout.best_e)
+    
     not_allocated = []
     for c in range(len(sol.classes)):
             cs = []
@@ -139,12 +143,15 @@ if __name__ == "__main__":
                     cs.append(sol.solution[t][r][c])
             if sum(cs) < 1:
                 not_allocated.append(sol.classes[c])
+    invalid = []
+    count = 0
+    for t in range(len(sol.timeslots)):
+        for c in range(len(sol.classes)):
+            for r in range(len(sol.classrooms)):
+                if sol.solution[t][r][c] == 1:
+                    count += 1
+                    if sol.timeslots[t] != sol.classes[c][1] or sol.classes[c][2] != sol.classrooms[r][1] or sol.classes[c][3] > sol.classrooms[r][2]:
+                        invalid.append((sol.classes[c], sol.timeslots[t], sol.classrooms[r]))
+    print("Total classes: ", count)
     print("Not allocated classes: ", not_allocated)
-                
-
-
-# [[[1,0,0],[0,1,0],[0,0,0]],[[0,0,0],[0,0,0],[0,0,1],[[0,0,0],[0,0,0],[0,0,0]]]
-# [[[1,0,0],[0,0,0],[0,1,0]],[[0,0,0],[0,0,0],[0,0,1],[[0,0,0],[0,0,0],[0,0,0]]]
-
-#[[[[('Turma1', '07:00', 'T', 35), ('Turma2', '07:00', 'P', 30), ('Turma3', '09:00', 'T', 45)]], [[('Turma1', '07:00', 'T', 35), ('Turma2', '07:00', 'P', 30), ('Turma3', '09:00', 'T', 45)]], [[('Turma1', '07:00', 'T', 35), ('Turma2', '07:00', 'P', 30), ('Turma3', '09:00', 'T', 45)]]], [[[('Turma1', '07:00', 'T', 35), ('Turma2', '07:00', 'P', 30), ('Turma3', '09:00', 'T', 45)]], [[('Turma1', '07:00', 'T', 35), ('Turma2', '07:00', 'P', 30), ('Turma3', '09:00', 'T', 45)]], [[('Turma1', '07:00', 'T', 35), ('Turma2', '07:00', 'P', 30), ('Turma3', '09:00', 'T', 45)]]], [[[('Turma1', '07:00', 'T', 35), ('Turma2', '07:00', 'P', 30), ('Turma3', '09:00', 'T', 45)]], [[('Turma1', '07:00', 'T', 35), ('Turma2', '07:00', 'P', 30), ('Turma3', '09:00', 'T', 45)]], [[('Turma1', '07:00', 'T', 35), ('Turma2', '07:00', 'P', 30), ('Turma3', '09:00', 'T', 45)]]]]
-# [[[0, 0, 1], [1, 1, 0], [1, 0, 1]], [[1, 1, 0], [0, 0, 0], [1, 0, 0]], [[1, 1, 0], [1, 0, 1], [1, 0, 1]]]
+    print("Invalid classes: ", invalid)
