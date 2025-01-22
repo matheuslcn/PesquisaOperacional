@@ -1,0 +1,19 @@
+3 10 5
+07:00
+09:00
+11:00
+Turma1 07:00 T 30
+Turma2 07:00 T 30
+Turma3 09:00 T 25
+Turma4 11:00 P 35
+Turma5 07:00 P 20
+Turma6 09:00 P 30
+Turma7 11:00 T 40
+Turma8 07:00 P 25
+Turma9 09:00 T 30
+Turma10 11:00 P 20
+Sala1 P 30
+Sala2 T 40
+Sala3 T 50
+Sala4 P 45
+Sala5 T 60

@@ -1,0 +1,11 @@
+Best solution: PAS:
+Solution=[('Turma2', 'Sala1', '07:00'), ('Turma8', 'Sala2', '07:00'), ('Turma22', 'Sala3', '07:00'), ('Turma14', 'Sala4', '07:00'), ('Turma1', 'Sala6', '07:00'), ('Turma19', 'Sala7', '07:00'), ('Turma25', 'Sala9', '07:00'), ('Turma16', 'Sala10', '07:00'), ('Turma4', 'Sala2', '09:00'), ('Turma3', 'Sala3', '09:00'), ('Turma17', 'Sala4', '09:00'), ('Turma20', 'Sala5', '09:00'), ('Turma15', 'Sala6', '09:00'), ('Turma11', 'Sala7', '09:00'), ('Turma23', 'Sala9', '09:00'), ('Turma5', 'Sala1', '11:00'), ('Turma6', 'Sala2', '11:00'), ('Turma12', 'Sala3', '11:00'), ('Turma21', 'Sala4', '11:00'), ('Turma18', 'Sala6', '11:00'), ('Turma10', 'Sala9', '11:00')]
+Total classes=20
+Not allocated classes=[('Turma3', '09:00', 'T', 45), ('Turma7', '09:00', 'T', 50), ('Turma9', '11:00', 'T', 40), ('Turma14', '07:00', 'P', 50), ('Turma24', '11:00', 'T', 45)]
+Invalid classes=[]
+Not allocated classrooms=[('Sala1', '07:00'), ('Sala1', '09:00'), ('Sala4', '11:00'), ('Sala5', '11:00'), ('Sala6', '09:00'), ('Sala8', '09:00'), ('Sala8', '11:00'), ('Sala10', '07:00'), ('Sala10', '09:00'), ('Sala10', '11:00')]
+Best evaluation: 315.0
+Worst evaluation: 255.0
+Average evaluation: 292.5
+Average time: 14.464925193786621
+Total time: 144.6492519378662

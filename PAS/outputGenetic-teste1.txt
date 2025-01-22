@@ -1,0 +1,11 @@
+Best solution: SolutionPAS:
+Solution=[('Turma8', 'Sala1', '07:00'), ('Turma1', 'Sala3', '07:00'), ('Turma5', 'Sala4', '07:00'), ('Turma2', 'Sala5', '07:00'), ('Turma9', 'Sala2', '09:00'), ('Turma6', 'Sala4', '09:00'), ('Turma3', 'Sala5', '09:00'), ('Turma10', 'Sala1', '11:00'), ('Turma4', 'Sala4', '11:00'), ('Turma7', 'Sala5', '11:00')]
+Fitness:150
+Total classes allocated=10
+Not allocated classes=[]
+Invalid classes=[]
+Not allocated classrooms=[('Sala1', '09:00'), ('Sala2', '07:00'), ('Sala2', '11:00'), ('Sala3', '09:00'), ('Sala3', '11:00')]
+Best evaluation: 150
+Worst evaluation: 135
+Average evaluation: 144.0
+Average time: 8.731185269
